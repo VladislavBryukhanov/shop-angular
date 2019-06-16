@@ -1,3 +1,106 @@
-<p>
-  sign works!
-</p>
+<mat-card>
+  <form [formGroup]="userForm">
+    <mat-form-field>
+      <input matInput
+             [formControl]="email"
+             placeholder="Email"
+             [errorStateMatcher]="this"
+             required>
+      <mat-error *ngIf="email.invalid">{{validation.email()}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput
+             placeholder="Enter your password"
+             [formControl]="password"
+             [type]="hidePassword ? 'password' : 'text'"
+             [errorStateMatcher]="this"
+             required>
+      <button mat-icon-button
+              matSuffix
+              (click)="hidePassword = !hidePassword">
+        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="password.invalid">{{validation.password()}}</mat-error>
+      <mat-hint align="end">{{password.value.length || 0}}/32</mat-hint>
+    </mat-form-field>
+
+    <ng-container *ngIf="signUp else SignIn">
+      <mat-form-field>
+        <input matInput
+               placeholder="Enter your first name"
+               [formControl]="firstName"
+               [errorStateMatcher]="this"
+               required>
+        <mat-error *ngIf="firstName.invalid">{{validation.firstName()}}</mat-error>
+        <mat-hint align="end">{{firstName.value.length || 0}}/20</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput
+               placeholder="Enter your last name"
+               [formControl]="lastName"
+               [errorStateMatcher]="this"
+               required>
+        <mat-error *ngIf="lastName.invalid">{{validation.lastName()}}</mat-error>
+        <mat-hint align="end">{{lastName.value.length || 0}}/20</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Gender</mat-label>
+        <mat-select [formControl]="gender">
+          <mat-option *ngFor="let opt of genderOptions"
+                      [value]="opt.value">
+            {{opt.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput
+               [formControl]="birthday"
+               [matDatepicker]="picker"
+               placeholder="Birthday"/>
+        <mat-datepicker-toggle matSuffix
+                               [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput
+               placeholder="Enter your address"
+               [formControl]="address"
+               [errorStateMatcher]="this"
+               required>
+        <mat-error *ngIf="address.invalid">{{validation.address()}}</mat-error>
+        <mat-hint align="end">{{address.value.length || 0}}/64</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput
+               type="tel"
+               placeholder="Enter your phone number"
+               [formControl]="phone"
+               [errorStateMatcher]="this"
+               required>
+        <mat-error *ngIf="phone.invalid">{{validation.phone()}}</mat-error>
+        <mat-hint align="end">{{phone.value.length || 0}}/12</mat-hint>
+      </mat-form-field>
+
+      <button (click)="onSignUp()"
+              mat-raised-button>Sign up</button>
+
+      <a routerLink="/"
+         mat-button>Sign in</a>
+    </ng-container>
+
+    <ng-template #SignIn>
+      <button (click)="onSignIn()"
+              mat-raised-button>Sign in</button>
+
+      <a routerLink="/sign_up"
+         mat-button>Sign up</a>
+    </ng-template>
+
+  </form>
+</mat-card>
