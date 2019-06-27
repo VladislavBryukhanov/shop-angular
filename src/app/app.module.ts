@@ -16,17 +16,20 @@ import {
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { SignComponent } from './shared/sign/sign.component';
+import { AuthComponent } from './shared/auth/auth.component';
+import { APIInterceptor } from './interceptors/APIInterceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
-  { path: '', component: SignComponent },
-  { path: 'sign_up', component: SignComponent, data: { signUp: true } }
+  { path: '', component: AuthComponent },
+  { path: 'sign_up', component: AuthComponent, data: { signUp: true } }
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    SignComponent,
+    AuthComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,9 +44,14 @@ const routes: Routes = [
     FormsModule,
     MatCardModule,
     ReactiveFormsModule,
+    HttpClientModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: APIInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,14 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorStateMatcher } from '@angular/material';
-import moment from 'moment';
+// import moment from 'moment';
+import * as moment from 'moment';
+import { AuthService } from '../../services/auth/auth.service';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-sign',
-  templateUrl: './sign.component.html',
-  styleUrls: ['./sign.component.scss']
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.scss']
 })
-export class SignComponent implements OnInit, ErrorStateMatcher {
+export class AuthComponent implements OnInit, ErrorStateMatcher {
 
   public hidePassword = true;
   public signUp: boolean;
@@ -72,7 +75,7 @@ export class SignComponent implements OnInit, ErrorStateMatcher {
     }
   ];
 
-  private validation = {
+  public validation = {
     email: () => {
       if (this.email.hasError('email')) {
         return 'Please enter a valid email address';
@@ -95,7 +98,7 @@ export class SignComponent implements OnInit, ErrorStateMatcher {
     }
   };
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private authService: AuthService) { }
 
   ngOnInit() {
     this.route
@@ -110,24 +113,31 @@ export class SignComponent implements OnInit, ErrorStateMatcher {
   }
 
   validateTextField(fc: FormControl, name: string, minLen: number, maxLen: number) {
-      if (fc.hasError('required')) {
-        return `${name} is required`;
-      }
-      if (fc.hasError('minlength')) {
-        return `${name} must be longer then ${minLen - 1} characters`;
-      }
-      if (fc.hasError('maxlength')) {
-        return `${name} must be less then ${maxLen + 1} characters`;
-      }
+    if (fc.hasError('required')) {
+      return `${name} is required`;
+    }
+    if (fc.hasError('minlength')) {
+      return `${name} must be longer then ${minLen - 1} characters`;
+    }
+    if (fc.hasError('maxlength')) {
+      return `${name} must be less then ${maxLen + 1} characters`;
+    }
   }
 
-  onSignIn() {
-    console.log(this.userForm.valid);
+  onSignIn(e) {
+    e.preventDefault();
+    const { email, password } = this.userForm.value;
+    this.authService.signIn({ email, password });
   }
 
-  onSignUp() {
-    const birthDay = moment(this.userForm.value.birthday).unix();
-    console.log(this.userForm.valid);
+  onSignUp(e) {
+    e.preventDefault();
     console.log(this.userForm);
+    const birthDay = moment(this.userForm.value.birthday).unix();
+    const newUser = new FormData();
+    newUser.append('birthDay', birthDay.toString());
+    _.each(this.userForm.value, (value, key) => {
+      newUser.append(key, value);
+    });
   }
 }

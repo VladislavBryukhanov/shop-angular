@@ -87,7 +87,7 @@
         <mat-hint align="end">{{phone.value.length || 0}}/12</mat-hint>
       </mat-form-field>
 
-      <button (click)="onSignUp()"
+      <button (click)="onSignUp($event)"
               mat-raised-button>Sign up</button>
 
       <a routerLink="/"
@@ -95,7 +95,7 @@
     </ng-container>
 
     <ng-template #SignIn>
-      <button (click)="onSignIn()"
+      <button (click)="onSignIn($event)"
               mat-raised-button>Sign in</button>
 
       <a routerLink="/sign_up"
