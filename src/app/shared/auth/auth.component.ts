@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorStateMatcher } from '@angular/material';
 // import moment from 'moment';
 import * as moment from 'moment';
 import { AuthService } from '../../services/auth/auth.service';
-import _ from 'lodash';
+import { ContactInfo, User } from '../../types/user';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { filter, map } from 'rxjs/internal/operators';
 
 @Component({
   selector: 'app-sign',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent implements OnInit, ErrorStateMatcher {
+export class AuthComponent implements OnInit, AfterContentInit, ErrorStateMatcher {
 
+  public responsiveGridParams = {
+    cols: 2,
+    fxFlexOffset: 10
+  };
   public hidePassword = true;
   public signUp: boolean;
 
@@ -38,7 +44,7 @@ export class AuthComponent implements OnInit, ErrorStateMatcher {
     Validators.maxLength(20)
   ]);
   public gender = new FormControl(null);
-  public birthday = new FormControl(null);
+  public birthDay = new FormControl(null);
 
   public address = new FormControl('', [
     Validators.required,
@@ -56,7 +62,7 @@ export class AuthComponent implements OnInit, ErrorStateMatcher {
     firstName: this.firstName,
     lastName: this.lastName,
     gender: this.gender,
-    birthday: this.birthday,
+    birthDay: this.birthDay,
 
     contactInfo: new FormGroup({
       address: this.address,
@@ -98,7 +104,54 @@ export class AuthComponent implements OnInit, ErrorStateMatcher {
     }
   };
 
-  constructor(private route: ActivatedRoute, private authService: AuthService) { }
+  public gridByBreakpoint = {
+    xl: {
+      cols: 4,
+      fxFlex: 46,
+      fxFlexOffset: 28,
+      rowHeight: '2:1',
+    },
+    lg: {
+      cols: 4,
+      fxFlex: 64,
+      fxFlexOffset: 18,
+      rowHeight: '2:1',
+    },
+    md: {
+      cols: 3,
+      fxFlex: 70,
+      fxFlexOffset: 15,
+      rowHeight: '2:1',
+    },
+    sm: {
+      cols: 2,
+      fxFlex: 80,
+      fxFlexOffset: 10,
+      rowHeight: '2:0.5',
+    },
+    xs: {
+      cols: 1,
+      fxFlex: 96,
+      fxFlexOffset: 2,
+      rowHeight: '2:0.5',
+    }
+  };
+
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private mediaObserver: MediaObserver) { }
+
+  ngAfterContentInit() {
+    this.mediaObserver
+      .asObservable()
+      .pipe(
+        filter((changes: MediaChange[]) => changes.length > 0),
+        map((changes: MediaChange[]) => changes[0])
+      ).subscribe((change: MediaChange) => {
+        this.responsiveGridParams = this.gridByBreakpoint[change.mqAlias];
+      });
+  }
 
   ngOnInit() {
     this.route
@@ -132,12 +185,16 @@ export class AuthComponent implements OnInit, ErrorStateMatcher {
 
   onSignUp(e) {
     e.preventDefault();
-    console.log(this.userForm);
-    const birthDay = moment(this.userForm.value.birthday).unix();
-    const newUser = new FormData();
-    newUser.append('birthDay', birthDay.toString());
-    _.each(this.userForm.value, (value, key) => {
-      newUser.append(key, value);
-    });
+/*    const newUser: User = {
+      ...this.userForm.value,
+      birthDay: moment(this.userForm.value.birthDay)
+        .unix()
+        .toString()
+    };
+    const contactInfo: ContactInfo = {
+      ...this.userForm.value.contactInfo
+    };
+
+    this.authService.signUp(newUser, contactInfo);*/
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Credentials, User } from '../../types/user';
+import { ContactInfo, Credentials, User } from '../../types/user';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,8 @@ export class AuthService {
       });
   }
 
-  public signUp(user: User) {
-    this.http.post('sign_up', user)
+  public signUp(user: User, contactInfo: ContactInfo) {
+    this.http.post('sign_up', { user, contactInfo })
       .subscribe(() => {
         this.me();
       });

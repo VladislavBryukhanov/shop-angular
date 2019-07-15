@@ -12,6 +12,7 @@ import {
   MatNativeDateModule,
   MatIconModule,
   MatCardModule,
+  MatGridListModule,
 } from '@angular/material';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -20,10 +21,23 @@ import { AuthComponent } from './shared/auth/auth.component';
 import { APIInterceptor } from './interceptors/APIInterceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 const routes: Routes = [
   { path: '', component: AuthComponent },
   { path: 'sign_up', component: AuthComponent, data: { signUp: true } }
+];
+
+const materialModules = [
+  MatButtonModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatSelectModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatIconModule,
+  MatCardModule,
+  MatGridListModule,
 ];
 
 @NgModule({
@@ -32,19 +46,13 @@ const routes: Routes = [
     AuthComponent,
   ],
   imports: [
+    ...materialModules,
     BrowserModule,
     BrowserAnimationsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatIconModule,
     FormsModule,
-    MatCardModule,
     ReactiveFormsModule,
     HttpClientModule,
+    FlexLayoutModule,
     RouterModule.forRoot(routes)
   ],
   providers: [{
